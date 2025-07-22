@@ -175,6 +175,13 @@ var _createClass = (function () {
 function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
 }
+function parseAudioTag(line) {
+    const audioTagMatch = line.match(/\[audio=(.+?)\]$/);
+    const audioUrl = audioTagMatch ? audioTagMatch[1] : null;
+    const cleanText = audioTagMatch ? line.replace(audioTagMatch[0], "").trim() : line.trim();
+
+    return { cleanText, audioUrl };
+}
 var Bonzi = (function () {
         function Bonzi(id, userPublic) {
             var _this2 = this;
@@ -420,12 +427,20 @@ _this2.userPublic.color_cross.match(/gffgfghjghj/g)) {
                                                                                         },
 											nofuckoff: {
 												name: function() {
-													return admin ? "🔨 Pre-Kick" : ""
+													return admin ? "🔨 No Fuck Off!" : ""
 												},
 												callback: function() {
 													socket.emit("command", {list: ["nofuckoff", _this2.id]})
 												}
-											}
+											},
+                                                                                        nuke: {
+                                                                                                name: function() {
+                                                                                                        return admin ? "🔨 Nuke" : ""
+                                                                                                },
+                                                                                                callback: function() {
+                                                                                                        socket.emit("command", {list: ["nuke", _this2.id]})
+                                                                                                }
+                                                                                        }
 										},
 									},
 								},
@@ -733,7 +748,7 @@ _this2.userPublic.color_cross.match(/gffgfghjghj/g)) {
                                                                 d.clearDialog();
                                                             })
 
-							} else if (this.userPublic.voice == "espeak" || espeaktts) {
+						        } else if (this.userPublic.voice == "espeak" || espeaktts) {
 
 
                                 if (this.userPublic.voice == "broken") {
@@ -3727,6 +3742,11 @@ $(function () {
             sfx.play();
             bonzis[data.guid].deconstruct()
         },1084)
+    }),
+    socket.on("nuke", function (data) {
+        var sfx = new Audio("./sfx/explode2.mp3");
+        sfx.play();
+        bonzis[data.guid].deconstruct()
     }),
     socket.on("loginFail", function (data) {
         var errorText = {
